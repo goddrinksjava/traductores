@@ -1,0 +1,3 @@
+
+rootProject.name = 'traductores'
+include('app')
