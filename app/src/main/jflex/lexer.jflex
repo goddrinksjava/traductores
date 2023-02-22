@@ -14,14 +14,14 @@ import java_cup.runtime.*;
     Object v;
     StringBuffer stringBuffer = new StringBuffer();
 
-    private Symbol symbol (BasicSym type) {
-        System.out.printf("%s Operador: <%s>\n", yytext(), type.toString());
-        return new Symbol (type.getValue(), yyline, yycolumn) ;
+    private Symbol symbol (int type) {
+        System.out.printf("%s\n", yytext());
+        return new Symbol (type, yyline, yycolumn) ;
     }
 
-    private Symbol symbol (BasicSym type, Object value) {
-        System.out.printf("%s Operador: <%s>\n", value.toString(), type.toString());
-        return new Symbol (type.getValue(), yyline, yycolumn, value) ;
+    private Symbol symbol (int type, Object value) {
+        System.out.printf("%s\n", value.toString());
+        return new Symbol (type, yyline, yycolumn, value) ;
     }
 %}
 
@@ -53,60 +53,66 @@ Char           = "CHAR("{ Integer }")"
 }
 
 <A> {
-    { Integer } { return symbol(BasicSym.INTEGER, yytext()); }
-    { Floating } { return symbol(BasicSym.FLOAT, yytext()); }
+    { Remark } { }
+
+    { Integer } { return symbol(BasicSym.INTEGER_LITERAL, yytext()); }
+    { Floating } { return symbol(BasicSym.FLOAT_LITERAL, yytext()); }
+
     { Char } { return symbol(BasicSym.CHAR, yytext()); }
-    { Remark } { return symbol(BasicSym.REMARK, yytext()); }
+
     \" { stringBuffer.setLength(0); yybegin(STRING); }
-    "," { return symbol(BasicSym.SEPARATOR, yytext()); }
+
+    "," { return symbol(BasicSym.COMMA, yytext()); }
     "(" { return symbol(BasicSym.PL, yytext()); }
     ")" { return symbol(BasicSym.PR, yytext()); }
     "[" { return symbol(BasicSym.BL, yytext()); }
     "]" { return symbol(BasicSym.BR, yytext()); }
-    "EQ" { return symbol(BasicSym.IGUAL, yytext()); }
-    "#" { return symbol(BasicSym.DIFERENTE, yytext()); }
-    ">" { return symbol(BasicSym.MAYOR, yytext()); }
-    ">=" { return symbol(BasicSym.MAYOR_IGUAL, yytext()); }
-    "<" { return symbol(BasicSym.MENOR, yytext()); }
-    "<=" { return symbol(BasicSym.MENOR_IGUAL, yytext()); }
-    "=" { return symbol(BasicSym.ASIGNACION, yytext()); }
-    "+" { return symbol(BasicSym.SUMA, yytext()); }
-    "-" { return symbol(BasicSym.RESTA, yytext()); }
-    "*" { return symbol(BasicSym.MULTIPLICACION, yytext()); }
-    "/" { return symbol(BasicSym.DIVISION, yytext()); }
-    "%" { return symbol(BasicSym.RESIDUO, yytext()); }
-    "**" { return symbol(BasicSym.EXPONENTE, yytext()); }
-    "^" { return symbol(BasicSym.EXPONENTE, yytext()); }
+
+    "+" { return symbol(BasicSym.NUMBINOP, BasicConstants.SUMA); }
+    "-" { return symbol(BasicSym.NUMBINOP, BasicConstants.RESTA); }
+    "*" { return symbol(BasicSym.NUMBINOP, BasicConstants.MULTIPLICACION); }
+    "/" { return symbol(BasicSym.NUMBINOP, BasicConstants.DIVISION); }
+    "%" { return symbol(BasicSym.NUMBINOP, BasicConstants.RESIDUO); }
+    "**" { return symbol(BasicSym.NUMBINOP, BasicConstants.EXPONENTE); }
+    "^" { return symbol(BasicSym.NUMBINOP, BasicConstants.EXPONENTE); }
+
+    "AND" { return symbol(BasicSym.BOOLBINOP, BasicConstants.AND); }
+    "OR" { return symbol(BasicSym.BOOLBINOP, BasicConstants.OR); }
+
+    ">" { return symbol(BasicSym.COMP, BasicConstants.MAYOR); }
+    "<" { return symbol(BasicSym.COMP, BasicConstants.MENOR); }
+    ">=" { return symbol(BasicSym.COMP, BasicConstants.MAYOR_IGUAL); }
+    "<=" { return symbol(BasicSym.COMP, BasicConstants.MENOR_IGUAL); }
+    "EQ" { return symbol(BasicSym.COMP, BasicConstants.IGUAL); }
+    "#" { return symbol(BasicSym.COMP, BasicConstants.DIFERENTE); }
+
+    "NOT" { return symbol(BasicSym.NOT, yytext()); }
+
+    "LET" { return symbol(BasicSym.LET, yytext()); }
+
+    "=" { return symbol(BasicSym.ASSIGN, yytext()); }
+    
     ":" { return symbol(BasicSym.CONCAT, yytext()); }
     "CAT" { return symbol(BasicSym.CONCAT, yytext()); }
+
     "IF" { return symbol(BasicSym.IF, yytext()); }
     "THEN" { return symbol(BasicSym.THEN, yytext()); }
     "ELSE" { return symbol(BasicSym.ELSE, yytext()); }
-    "AND" { return symbol(BasicSym.AND, yytext()); }
-    "OR" { return symbol(BasicSym.OR, yytext()); }
-    "NOT" { return symbol(BasicSym.NOT, yytext()); }
-    "MATCH" { return symbol(BasicSym.MATCH, yytext()); }
-    "MATCHES" { return symbol(BasicSym.MATCH, yytext()); }
-    "REUSE" { return symbol(BasicSym.REUSE, yytext()); }
-    "LET" { return symbol(BasicSym.LET, yytext()); }
-    "DATA" { return symbol(BasicSym.DATA, yytext()); }
-    "READ" { return symbol(BasicSym.READ, yytext()); }
-    "DIM" { return symbol(BasicSym.DIM, yytext()); }
+
     "FOR" { return symbol(BasicSym.FOR, yytext()); }
     "TO" { return symbol(BasicSym.TO, yytext()); }
     "NEXT" { return symbol(BasicSym.NEXT, yytext()); }
-    "REPEAT" { return symbol(BasicSym.REPEAT, yytext()); }
-    "UNTIL" { return symbol(BasicSym.UNTIL, yytext()); }
+
     "DO" { return symbol(BasicSym.DO, yytext()); }
     "LOOP" { return symbol(BasicSym.LOOP, yytext()); }
-    "GOTO" { return symbol(BasicSym.GOTO, yytext()); }
-    "GOSUB" { return symbol(BasicSym.GOSUB, yytext()); }
-    "RETURN" { return symbol(BasicSym.RETURN, yytext()); }
-    "LIST" { return symbol(BasicSym.LIST, yytext()); }
+    "UNTIL" { return symbol(BasicSym.UNTIL, yytext()); }
+
     "INPUT" { return symbol(BasicSym.INPUT, yytext()); }
     "PRINT" { return symbol(BasicSym.PRINT, yytext()); }
+
     { Identifier } { return symbol(BasicSym.IDENTIFIER, yytext()); }
-    . { System.out.println(yytext()+" Error no se reconoce simbolo"); return symbol(BasicSym.ERROR); }
+
+    . { System.out.println(yytext()+" Error no se reconoce simbolo"); }
 }
 
 <STRING> {

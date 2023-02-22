@@ -23,3 +23,7 @@ application {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+cup {
+    args = ["-interface", "-destdir", "src/main/java/traductores", "-symbols", "BasicSym", "-parser", "BasicParser"]
+}

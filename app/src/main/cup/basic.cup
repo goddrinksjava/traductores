@@ -1,0 +1,52 @@
+package traductores;
+import java_cup.runtime.Symbol;
+
+parser code{:
+    private Symbol s;
+    public void syntaxis_error(Symbol s){
+        this.s=s;
+System.out.println("compiler has detected a syntax error at line " + s.left 
+        + " column " + s.right);
+    }
+    public Symbol getS(){
+        return s;
+    }
+:};
+
+terminal COMMA, PL, PR, BL, BR, IF, THEN, ELSE, FOR, TO, NEXT, DO, LOOP, UNTIL, INPUT, PRINT, NOT, ASSIGN;
+terminal LABEL, LET, NUMBINOP, COMP, BOOLBINOP, INTEGER_LITERAL, FLOAT_LITERAL, CONCAT, CHAR;
+terminal IDENTIFIER, STRING_LITERAL;
+
+non terminal program,stmts,stmt,expr,cond;
+
+precedence left ELSE, NUMBINOP, NOT, BOOLBINOP, CONCAT;
+
+program   ::= program:p stmts:s | stmts:s;
+
+stmts     ::= LABEL:l stmt:s | stmt:s;
+
+stmt ::= LET IDENTIFIER:ident ASSIGN expr:e
+    | IF cond:c THEN stmt:s
+    | IF cond:c THEN stmt:t ELSE stmt:f
+    | FOR IDENTIFIER:i ASSIGN expr:e TO IDENTIFIER:n stmts:s LABEL:l NEXT IDENTIFIER
+    | DO program:p LOOP UNTIL cond:c
+    | PRINT expr:e
+    ;
+
+cond ::=  PL cond:c PR
+    | expr:e1 COMP:op expr:e2
+    | NOT cond:c
+    | cond:c1 BOOLBINOP:op cond:c2
+    ;
+
+expr ::= IDENTIFIER:identifier
+    | INTEGER_LITERAL:constant
+    | FLOAT_LITERAL:constant
+    | STRING_LITERAL:constant
+    | CHAR:chara
+    | PL expr:e PR
+    | NOT expr:e
+    | expr:e1 BOOLBINOP:op expr:e2
+    | expr:e1 NUMBINOP:op expr:e2
+    | expr:e1 CONCAT:c expr:e2
+    ;
