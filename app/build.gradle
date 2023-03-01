@@ -25,5 +25,5 @@ tasks.named('test') {
 }
 
 cup {
-    args = ["-interface", "-destdir", "src/main/java/traductores", "-symbols", "BasicSym", "-parser", "BasicParser"]
+    args = ["-interface", "-symbols", "BasicSym", "-parser", "BasicParser"]
 }

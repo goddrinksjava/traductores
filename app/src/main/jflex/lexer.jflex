@@ -31,7 +31,7 @@ import java_cup.runtime.*;
 
 LineTerminator = \r|\n|\r\n
 WhiteSpace     = [ \t\f]
-Identifier     = [A-Z]+
+Identifier     = [A-Za-z$]+
 Label          = ([0-9][0-9A-Z]*":"? | [0-9A-Z]*":")
 Remark         = "REM"{WhiteSpace}.*
 Integer        = [0-9]+
@@ -45,15 +45,14 @@ Char           = "CHAR("{ Integer }")"
 
 <YYINITIAL> {
     { Label } { yybegin(A); return symbol(BasicSym.LABEL, yytext()); }
+    . { yypushback(1); yybegin(A); }
 } 
 
-<YYINITIAL,A> {
+<YYINITIAL, A> {
     { WhiteSpace } {}
     { LineTerminator } {yybegin(YYINITIAL);}
-}
-
-<A> {
-    { Remark } { }
+    ";" {yybegin(YYINITIAL);}
+    { Remark } {}
 
     { Integer } { return symbol(BasicSym.INTEGER_LITERAL, yytext()); }
     { Floating } { return symbol(BasicSym.FLOAT_LITERAL, yytext()); }
@@ -89,6 +88,7 @@ Char           = "CHAR("{ Integer }")"
     "NOT" { return symbol(BasicSym.NOT, yytext()); }
 
     "LET" { return symbol(BasicSym.LET, yytext()); }
+    "CONST" { return symbol(BasicSym.CONST, yytext()); }
 
     "=" { return symbol(BasicSym.ASSIGN, yytext()); }
     

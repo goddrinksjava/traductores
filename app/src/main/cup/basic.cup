@@ -14,7 +14,7 @@ System.out.println("compiler has detected a syntax error at line " + s.left
 :};
 
 terminal COMMA, PL, PR, BL, BR, IF, THEN, ELSE, FOR, TO, NEXT, DO, LOOP, UNTIL, INPUT, PRINT, NOT, ASSIGN;
-terminal LABEL, LET, NUMBINOP, COMP, BOOLBINOP, INTEGER_LITERAL, FLOAT_LITERAL, CONCAT, CHAR;
+terminal LABEL, LET, CONST, NUMBINOP, COMP, BOOLBINOP, INTEGER_LITERAL, FLOAT_LITERAL, CONCAT, CHAR;
 terminal IDENTIFIER, STRING_LITERAL;
 
 non terminal program,stmts,stmt,expr,cond;
@@ -25,7 +25,9 @@ program   ::= program:p stmts:s | stmts:s;
 
 stmts     ::= LABEL:l stmt:s | stmt:s;
 
-stmt ::= LET IDENTIFIER:ident ASSIGN expr:e
+stmt ::=
+      LET IDENTIFIER:ident ASSIGN expr:e
+    | CONST IDENTIFIER:ident ASSIGN expr:e
     | IF cond:c THEN stmt:s
     | IF cond:c THEN stmt:t ELSE stmt:f
     | FOR IDENTIFIER:i ASSIGN expr:e TO IDENTIFIER:n stmts:s LABEL:l NEXT IDENTIFIER
